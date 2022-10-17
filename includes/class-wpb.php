@@ -160,6 +160,8 @@ class Wpb {
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_post_type_book' );
 		// Register category for custom post type "Book".
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_category_book' );
+		// Action hook for custom post type "Book".
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_tag_book' );
 	}
 
 	/**
