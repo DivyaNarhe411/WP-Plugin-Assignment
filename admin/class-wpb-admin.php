@@ -221,4 +221,68 @@ class Wpb_Admin {
 
 		register_taxonomy( 'Book Tag', array( 'post', 'book' ), $args );
 	}
+	/**
+	 * Creates custom meta box
+	 *
+	 * @return void
+	 */
+	public function custom_metabox_books() {
+		add_meta_box( 'custom-books-info', 'Books Info', array( $this, 'custom_books_info_function' ), array( 'book' ) );
+	}
+
+	/**
+	 * Shows custom metabox books and get values for wp_booksmeta (if any).
+	 *
+	 * @since    1.0.0
+	 * @param      object $post       Contains all information about post.
+	 */
+	public function custom_books_info_function( $post ) {
+		$get_book_metadata = get_metadata( 'book', $post->ID );
+		if ( count( $get_book_metadata ) > 0 ) {
+			$author    = $get_book_metadata['author_name'][0];
+			$price     = $get_book_metadata['price'][0];
+			$publisher = $get_book_metadata['publisher'][0];
+			$year      = $get_book_metadata['year'][0];
+			$edition   = $get_book_metadata['edition'][0];
+			$url       = $get_book_metadata['url'][0];
+		} else {
+			$author    = '';
+			$price     = '';
+			$publisher = '';
+			$year      = '';
+			$edition   = '';
+			$url       = '';
+		}
+		wp_nonce_field( basename( __FILE__ ), 'custom_books_info_nonce' );
+		?>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th scope="row"><label for="wpb-custom-author-name">Author Name</label></th>
+					<td><input name="wpb-custom-author-name" type="text" id="wpb-custom-author-name" value="<?php echo $author; ?>" placeholder="Author Name" class="regular-text" autocomplete="off"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-price">Book Price</label></th>
+					<td><input name="wpb-custom-price" type="text" id="wpb-custom-price" value="<?php echo $price; ?>" placeholder="Book Price" class="regular-text" autocomplete="off"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-publisher">Publisher</label></th>
+					<td><input name="wpb-custom-publisher" type="text" id="wpb-custom-publisher" value="<?php echo $publisher; ?>" placeholder="Publisher" class="regular-text" autocomplete="off"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-year">Year</label></th>
+					<td><input name="wpb-custom-year" type="number" id="wpb-custom-year" value="<?php echo $year; ?>" placeholder="Year" class="regular-text" autocomplete="off"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-edition">Edition</label></th>
+					<td><input name="wpb-custom-edition" type="text" id="wpb-custom-edition" value="<?php echo $edition; ?>" placeholder="Edition" class="regular-text" autocomplete="off"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-url">URL</label></th>
+					<td><input name="wpb-custom-url" type="url" id="wpb-custom-url" value="<?php echo $url; ?>" placeholder="URL eg. https://example.com" class="regular-text" autocomplete="off"></td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+	}
 }

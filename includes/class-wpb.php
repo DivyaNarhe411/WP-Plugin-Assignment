@@ -162,6 +162,8 @@ class Wpb {
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_category_book' );
 		// Action hook for custom post type "Book".
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_tag_book' );
+		// Action hook for custom metabox.
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'custom_metabox_books' );
 	}
 
 	/**
