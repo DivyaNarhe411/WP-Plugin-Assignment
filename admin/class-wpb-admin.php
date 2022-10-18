@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -177,7 +176,7 @@ class Wpb_Admin {
 			'show_in_nav_menus' => true,
 			'show_tagcloud'     => true,
 		);
-		register_taxonomy( 'Book Category', array( 'post', 'book' ), $args );
+		register_taxonomy( 'Book Category', array( 'book' ), $args );
 	}
 	/**
 	 * Register Custom Non-Hierarchical Taxonomy Book Tag
@@ -219,7 +218,7 @@ class Wpb_Admin {
 			'show_tagcloud'     => true,
 		);
 
-		register_taxonomy( 'Book Tag', array( 'post', 'book' ), $args );
+		register_taxonomy( 'Book Tag', array( 'book' ), $args );
 	}
 	/**
 	 * Registers the custom table named bookmeta
@@ -268,27 +267,27 @@ class Wpb_Admin {
 			<tbody>
 				<tr>
 					<th scope="row"><label for="wpb-custom-author-name">Author Name</label></th>
-					<td><input name="wpb-custom-author-name" type="text" id="wpb-custom-author-name" value="<?php echo $author; ?>" placeholder="Author Name" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-author-name" type="text" id="wpb-custom-author-name" value="<?php echo $author; ?>" placeholder="Author Name" class="widefat" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="wpb-custom-price">Book Price</label></th>
-					<td><input name="wpb-custom-price" type="text" id="wpb-custom-price" value="<?php echo $price; ?>" placeholder="Book Price" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-price" type="text" id="wpb-custom-price" value="<?php echo $price; ?>" placeholder="Book Price" class="widefat" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="wpb-custom-publisher">Publisher</label></th>
-					<td><input name="wpb-custom-publisher" type="text" id="wpb-custom-publisher" value="<?php echo $publisher; ?>" placeholder="Publisher" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-publisher" type="text" id="wpb-custom-publisher" value="<?php echo $publisher; ?>" placeholder="Publisher" class="widefat" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="wpb-custom-year">Year</label></th>
-					<td><input name="wpb-custom-year" type="number" id="wpb-custom-year" value="<?php echo $year; ?>" placeholder="Year" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-year" type="number" id="wpb-custom-year" value="<?php echo $year; ?>" placeholder="Year" class="widefat" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="wpb-custom-edition">Edition</label></th>
-					<td><input name="wpb-custom-edition" type="text" id="wpb-custom-edition" value="<?php echo $edition; ?>" placeholder="Edition" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-edition" type="text" id="wpb-custom-edition" value="<?php echo $edition; ?>" placeholder="Edition" class="widefat" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="wpb-custom-url">URL</label></th>
-					<td><input name="wpb-custom-url" type="url" id="wpb-custom-url" value="<?php echo $url; ?>" placeholder="URL eg. https://example.com" class="regular-text" autocomplete="off"></td>
+					<td><input name="wpb-custom-url" type="url" id="wpb-custom-url" value="<?php echo $url; ?>" placeholder="URL eg. https://example.com" class="widefat" autocomplete="off"></td>
 				</tr>
 			</tbody>
 		</table>
@@ -309,7 +308,7 @@ class Wpb_Admin {
 
 		$post_slug = 'book';
 
-		if ( $post_slug != $post->post_type ) {
+		if ( $post_slug !== $post->post_type ) {
 			return;
 		}
 
@@ -361,123 +360,5 @@ class Wpb_Admin {
 		update_metadata( 'book', $post_id, 'year', $year );
 		update_metadata( 'book', $post_id, 'edition', $edition );
 		update_metadata( 'book', $post_id, 'url', $url );
-
-		update_metadata( 'post', $post_id, 'author_name', $author );
-		update_metadata( 'post', $post_id, 'price', $price );
-		update_metadata( 'post', $post_id, 'publisher', $publisher );
-		update_metadata( 'post', $post_id, 'year', $year );
-		update_metadata( 'post', $post_id, 'edition', $edition );
-		update_metadata( 'post', $post_id, 'url', $url );
-
-	}
-
-	/**
-	 * Create menu method.
-	 *
-	 * @return void
-	 */
-	public function book_menu() {
-		add_menu_page( 'Booksmenu', 'Booksmenu', 'manage_options', 'books-menu', array( $this, 'book_dashboard' ), 'dashicons-book', 76 );
-	}
-	/**
-	 * "Booksmenu" menu callback function
-	 *
-	 * @return void
-	 */
-	public function book_dashboard() {
-		ob_start();
-		?>
-		<div class="wrap">
-		<?php
-		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == true ) {
-			?>
-			<div class="notice notice-success"><p>Settings Saved Successfully</p></div>
-			<?php
-		}
-		?>
-			<h2>Book Settings</h2>
-			<p>Manages all the settings of book plugin</p>
-
-			<form method="post" action="options.php">
-				<?php settings_fields( 'book_settings_group' ); ?>
-				<table class="form-table">
-					<tbody>
-						<tr>
-							<th scope="row"><label for="book_currency">Currency</label></th>
-							<?php $currency_option = get_option( 'book_currency' ); ?>
-							<td>
-								<select name="book_currency" id="book_currency" class="regular-text">
-									<option value="Indian Rupees" <?php selected( $currency_option, 'Indian Rupees' ); ?> >Indian Rupees</option>
-									<option value="US Dollar" <?php selected( $currency_option, 'US Dollar' ); ?> >US Dollar</option>
-									<option value="UK Pound Sterling" <?php selected( $currency_option, 'UK Pound Sterling' ); ?> >UK Pound Sterling</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row"><label for="book_no_pages">No. of Books (per page)</label></th>
-							<td><input type="text" class="regular-text" name="book_no_pages" id="book_no_pages" placeholder="No. of Books" value="<?php echo get_option( 'book_no_pages' ); ?>"></td>
-						</tr>
-						<tr>
-							<td><input type="submit" value="Save Settings" class="button-primary"></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
-		</div>
-		<?php
-		echo ob_get_clean();
-	}
-	/**
-	 * Include post type Book as post to show Book posts in post archive.
-	 *
-	 * @since    1.0.0
-	 * @param      WP_Query Object $query    Contains all information about post and stuff.
-	 */
-	public function namespace_add_custom_types( $query ) {
-
-		if ( ( is_category() || is_tag() ) && $query->is_archive() && empty( $query->query_vars['suppress_filters'] ) ) {
-			$query->set(
-				'post_type',
-				array(
-					'post',
-					'Book',
-				)
-			);
-		}
-	}
-	/**
-	 * Create a custom widget for dashboard
-	 *
-	 * @return void
-	 */
-	public function custom_dashboard_widgets() {
-		global $wp_meta_boxes;
-		wp_add_dashboard_widget( 'book_widget', 'Top 5 Book Categories', array( $this, 'custom_dashboard_help' ) );
-	}
-
-	/**
-	 * Provides Top 5 categories of book post type based on their count
-	 *
-	 * @return void
-	 */
-	function custom_dashboard_help() {
-		global $wpdb;
-		$get_term_ids   = $wpdb->get_col( "SELECT term_id FROM `wp_term_taxonomy` WHERE taxonomy = 'Book Category' ORDER BY count DESC LIMIT 5" );
-		$top_terms_name = array();
-		$top_terms_slug = array();
-		foreach ( $get_term_ids as $id ) {
-			$get_term = $wpdb->get_row( "SELECT name, slug FROM wp_terms WHERE term_id = $id", 'ARRAY_A' );
-			array_push( $top_terms_name, $get_term['name'] );
-			array_push( $top_terms_slug, $get_term['slug'] );
-		}
-		?>
-		<ol>
-			<?php
-			for ( $i = 0; $i < count( $top_terms_name ); $i++ ) {
-				echo "<li style='font-size:15px;'> <a target='_blank' href=" . get_site_url() . "/book-category/$top_terms_slug[$i]>$top_terms_name[$i]</li>";
-			}
-			?>
-		</ol>
-		<?php
 	}
 }
