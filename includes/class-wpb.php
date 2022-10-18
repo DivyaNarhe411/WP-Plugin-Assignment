@@ -120,6 +120,8 @@ class Wpb {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wpb-public.php';
+		// Added gutenberg block widgets for book.
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/wp-book-custom-widgets.php';
 		$this->loader = new Wpb_Loader();
 
 	}
