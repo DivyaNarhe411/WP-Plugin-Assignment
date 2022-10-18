@@ -172,6 +172,8 @@ class Wpb {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'book_menu' );
 		// Action hook to register the settings for book.
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_book_settings' );
+		// Action hook to display widget on dashboard as top 5 categories of book post type based on their count.
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'custom_dashboard_widgets' );
 	}
 
 	/**
@@ -190,6 +192,8 @@ class Wpb {
 
 		// Create Shortcode named book to show information about book.
 		add_shortcode( 'book', array( $plugin_public, 'load_book_content' ) );
+		// Created widgets for book.
+		add_action( 'widgets_init', 'wp_book_widget_init' );
 	}
 
 	/**
