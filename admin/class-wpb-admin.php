@@ -222,12 +222,21 @@ class Wpb_Admin {
 		register_taxonomy( 'Book Tag', array( 'post', 'book' ), $args );
 	}
 	/**
+	 * Registers the custom table named bookmeta
+	 *
+	 * @return void
+	 */
+	public function pw_register_bookmeta_table() {
+		global $wpdb;
+		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
+	}
+	/**
 	 * Creates custom meta box
 	 *
 	 * @return void
 	 */
 	public function custom_metabox_books() {
-		add_meta_box( 'custom-books-info', 'Books Info', array( $this, 'custom_books_info_function' ), array( 'book' ) );
+		add_meta_box( 'custom-books-info', 'Books Info', array( $this, 'custom_books_info_function' ), array( 'book', 'post' ) );
 	}
 
 	/**
@@ -283,6 +292,192 @@ class Wpb_Admin {
 				</tr>
 			</tbody>
 		</table>
+		<?php
+	}
+	/**
+	 * Stores all metadata of custom post type to custom table called wp_bookmeta
+	 *
+	 * @since    1.0.0
+	 * @param      integer $post_id       Contains Post ID.
+	 * @param      object  $post          Contains all information about post.
+	 */
+	public function save_custom_metabox_data( $post_id, $post ) {
+
+		if ( ! isset( $_POST['custom_books_info_nonce'] ) || ! wp_verify_nonce( $_POST['custom_books_info_nonce'], basename( __FILE__ ) ) ) {
+			return $post_id;
+		}
+
+		$post_slug = 'book';
+
+		if ( $post_slug != $post->post_type ) {
+			return;
+		}
+
+		$author = '';
+		if ( isset( $_POST['wpb-custom-author-name'] ) ) {
+			$author = sanitize_text_field( $_POST['wpb-custom-author-name'] );
+		} else {
+			$author = '';
+		}
+
+		$price = '';
+		if ( isset( $_POST['wpb-custom-price'] ) ) {
+			$price = sanitize_text_field( $_POST['wpb-custom-price'] );
+		} else {
+			$price = '';
+		}
+
+		$publisher = '';
+		if ( isset( $_POST['wpb-custom-publisher'] ) ) {
+			$publisher = sanitize_text_field( $_POST['wpb-custom-publisher'] );
+		} else {
+			$publisher = '';
+		}
+
+		$year = '';
+		if ( isset( $_POST['wpb-custom-year'] ) ) {
+			$year = sanitize_text_field( $_POST['wpb-custom-year'] );
+		} else {
+			$year = '';
+		}
+
+		$edition = '';
+		if ( isset( $_POST['wpb-custom-edition'] ) ) {
+			$edition = sanitize_text_field( $_POST['wpb-custom-edition'] );
+		} else {
+			$edition = '';
+		}
+
+		$url = '';
+		if ( isset( $_POST['wpb-custom-url'] ) ) {
+			$url = sanitize_text_field( $_POST['wpb-custom-url'] );
+		} else {
+			$url = '';
+		}
+
+		update_metadata( 'book', $post_id, 'author_name', $author );
+		update_metadata( 'book', $post_id, 'price', $price );
+		update_metadata( 'book', $post_id, 'publisher', $publisher );
+		update_metadata( 'book', $post_id, 'year', $year );
+		update_metadata( 'book', $post_id, 'edition', $edition );
+		update_metadata( 'book', $post_id, 'url', $url );
+
+		update_metadata( 'post', $post_id, 'author_name', $author );
+		update_metadata( 'post', $post_id, 'price', $price );
+		update_metadata( 'post', $post_id, 'publisher', $publisher );
+		update_metadata( 'post', $post_id, 'year', $year );
+		update_metadata( 'post', $post_id, 'edition', $edition );
+		update_metadata( 'post', $post_id, 'url', $url );
+
+	}
+
+	/**
+	 * Create menu method.
+	 *
+	 * @return void
+	 */
+	public function book_menu() {
+		add_menu_page( 'Booksmenu', 'Booksmenu', 'manage_options', 'books-menu', array( $this, 'book_dashboard' ), 'dashicons-book', 76 );
+	}
+	/**
+	 * "Booksmenu" menu callback function
+	 *
+	 * @return void
+	 */
+	public function book_dashboard() {
+		ob_start();
+		?>
+		<div class="wrap">
+		<?php
+		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == true ) {
+			?>
+			<div class="notice notice-success"><p>Settings Saved Successfully</p></div>
+			<?php
+		}
+		?>
+			<h2>Book Settings</h2>
+			<p>Manages all the settings of book plugin</p>
+
+			<form method="post" action="options.php">
+				<?php settings_fields( 'book_settings_group' ); ?>
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row"><label for="book_currency">Currency</label></th>
+							<?php $currency_option = get_option( 'book_currency' ); ?>
+							<td>
+								<select name="book_currency" id="book_currency" class="regular-text">
+									<option value="Indian Rupees" <?php selected( $currency_option, 'Indian Rupees' ); ?> >Indian Rupees</option>
+									<option value="US Dollar" <?php selected( $currency_option, 'US Dollar' ); ?> >US Dollar</option>
+									<option value="UK Pound Sterling" <?php selected( $currency_option, 'UK Pound Sterling' ); ?> >UK Pound Sterling</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="book_no_pages">No. of Books (per page)</label></th>
+							<td><input type="text" class="regular-text" name="book_no_pages" id="book_no_pages" placeholder="No. of Books" value="<?php echo get_option( 'book_no_pages' ); ?>"></td>
+						</tr>
+						<tr>
+							<td><input type="submit" value="Save Settings" class="button-primary"></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<?php
+		echo ob_get_clean();
+	}
+	/**
+	 * Include post type Book as post to show Book posts in post archive.
+	 *
+	 * @since    1.0.0
+	 * @param      WP_Query Object $query    Contains all information about post and stuff.
+	 */
+	public function namespace_add_custom_types( $query ) {
+
+		if ( ( is_category() || is_tag() ) && $query->is_archive() && empty( $query->query_vars['suppress_filters'] ) ) {
+			$query->set(
+				'post_type',
+				array(
+					'post',
+					'Book',
+				)
+			);
+		}
+	}
+	/**
+	 * Create a custom widget for dashboard
+	 *
+	 * @return void
+	 */
+	public function custom_dashboard_widgets() {
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget( 'book_widget', 'Top 5 Book Categories', array( $this, 'custom_dashboard_help' ) );
+	}
+
+	/**
+	 * Provides Top 5 categories of book post type based on their count
+	 *
+	 * @return void
+	 */
+	function custom_dashboard_help() {
+		global $wpdb;
+		$get_term_ids   = $wpdb->get_col( "SELECT term_id FROM `wp_term_taxonomy` WHERE taxonomy = 'Book Category' ORDER BY count DESC LIMIT 5" );
+		$top_terms_name = array();
+		$top_terms_slug = array();
+		foreach ( $get_term_ids as $id ) {
+			$get_term = $wpdb->get_row( "SELECT name, slug FROM wp_terms WHERE term_id = $id", 'ARRAY_A' );
+			array_push( $top_terms_name, $get_term['name'] );
+			array_push( $top_terms_slug, $get_term['slug'] );
+		}
+		?>
+		<ol>
+			<?php
+			for ( $i = 0; $i < count( $top_terms_name ); $i++ ) {
+				echo "<li style='font-size:15px;'> <a target='_blank' href=" . get_site_url() . "/book-category/$top_terms_slug[$i]>$top_terms_name[$i]</li>";
+			}
+			?>
+		</ol>
 		<?php
 	}
 }
