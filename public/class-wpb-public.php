@@ -249,5 +249,4 @@ class Wpb_Public {
 
 		return $content;
 	}
-
 }
