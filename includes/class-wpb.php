@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -121,7 +120,6 @@ class Wpb {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wpb-public.php';
-
 		$this->loader = new Wpb_Loader();
 
 	}
@@ -170,9 +168,6 @@ class Wpb {
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'pw_register_bookmeta_table' );
 		// Action hook for admin_menu.
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'book_menu' );
-		$this->loader->add_action( 'pre_get_posts', $plugin_admin, 'namespace_add_custom_types' );
-		// Action hook to display widget on dashboard as top 5 categories of book post type based on their count.
-		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'custom_dashboard_widgets' );
 	}
 
 	/**
@@ -188,9 +183,6 @@ class Wpb {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		// Create Shortcode named book to show information about book.
-		add_shortcode( 'book', array( $plugin_public, 'load_book_content' ) );
-
 	}
 
 	/**

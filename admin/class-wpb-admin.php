@@ -361,4 +361,12 @@ class Wpb_Admin {
 		update_metadata( 'book', $post_id, 'edition', $edition );
 		update_metadata( 'book', $post_id, 'url', $url );
 	}
+	/**
+	 * Create menu method.
+	 *
+	 * @return void
+	 */
+	public function book_menu() {
+		add_menu_page( 'Booksmenu', 'Booksmenu', 'manage_options', 'books-menu', array( $this, 'book_dashboard' ), 'dashicons-book', 76 );
+	}
 }
