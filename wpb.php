@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file
  *
@@ -43,7 +42,8 @@ define( 'WPB_VERSION', '1.0.0' );
  */
 function activate_wpb() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpb-activator.php';
-	Wpb_Activator::activate();
+	$activator = new Wpb_Activator();
+	$activator->activate();
 }
 
 /**
@@ -52,7 +52,8 @@ function activate_wpb() {
  */
 function deactivate_wpb() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpb-deactivator.php';
-	Wpb_Deactivator::deactivate();
+	$deactivator = new Wpb_Deactivator();
+	$deactivator->deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_wpb' );
