@@ -417,4 +417,13 @@ class Wpb_Admin {
 		<?php
 		echo ob_get_clean();
 	}
+	/**
+	 * Registers the settings group for each input field
+	 *
+	 * @return void
+	 */
+	public function register_book_settings() {
+		register_setting( 'book_settings_group', 'book_currency' );
+		register_setting( 'book_settings_group', 'book_no_pages' );
+	}
 }

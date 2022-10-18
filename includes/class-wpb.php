@@ -170,6 +170,8 @@ class Wpb {
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'pw_register_bookmeta_table' );
 		// Action hook for admin_menu.
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'book_menu' );
+		// Action hook to register the settings for book.
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_book_settings' );
 	}
 
 	/**
